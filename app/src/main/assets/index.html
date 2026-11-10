@@ -1,0 +1,668 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Noyaux, masse et énergie</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout : en-tête + onglets, puis scène 3D à gauche et tableau de mesures à droite (une colonne sur téléphone) */
+:root{
+  --bg:#eef2f5; --surface:#ffffff; --stage:#e2e8ee; --fg:#12202c; --muted:#566676; --line:#cfd8e1;
+  --accent:#1c5fd1; --accent-soft:rgba(28,95,209,.10); --on-accent:#ffffff;
+  --proton:#d2452f; --neutron:#7f90a6; --flash:#ffc85a;
+  --uranium:#b07a1e; --fragment:#9aa6b2; --rod:#3d4855; --spark:#2a6fe0;
+  --fusion-zone:rgba(28,95,209,.10); --fission-zone:rgba(210,69,47,.10);
+  --f-display:"Archivo","Arial Narrow",sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0c1218; --surface:#131c25; --stage:#08101a; --fg:#e4ecf3; --muted:#8fa0b1; --line:#24313e;
+  --accent:#74a2ff; --accent-soft:rgba(116,162,255,.14); --on-accent:#0b1220;
+  --proton:#ef6a52; --neutron:#9fb0c4; --flash:#ffd27a;
+  --uranium:#e0aa45; --fragment:#5f6e7d; --rod:#a7b4c2; --spark:#8fd0ff;
+  --fusion-zone:rgba(116,162,255,.12); --fission-zone:rgba(239,106,82,.12); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0c1218; --surface:#131c25; --stage:#08101a; --fg:#e4ecf3; --muted:#8fa0b1; --line:#24313e;
+  --accent:#74a2ff; --accent-soft:rgba(116,162,255,.14); --on-accent:#0b1220;
+  --proton:#ef6a52; --neutron:#9fb0c4; --flash:#ffd27a;
+  --uranium:#e0aa45; --fragment:#5f6e7d; --rod:#a7b4c2; --spark:#8fd0ff;
+  --fusion-zone:rgba(116,162,255,.12); --fission-zone:rgba(239,106,82,.12); color-scheme:dark}
+
+body{background:var(--bg);color:var(--fg);font:15px/1.55 var(--f-body)}
+.wrap{max-width:1180px;margin:0 auto;padding-block:20px 28px;
+  padding-left:max(16px, env(safe-area-inset-left,0px));padding-right:max(16px, env(safe-area-inset-right,0px));
+  display:flex;flex-direction:column;gap:16px}
+.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 24px}
+.eyebrow{margin:0;font:600 11px/1.3 var(--f-body);text-transform:uppercase;letter-spacing:.09em;color:var(--muted)}
+h1{font-family:var(--f-display);font-stretch:76%;font-weight:800;font-size:clamp(32px,6.4vw,54px);
+  line-height:.96;letter-spacing:-.005em;margin:6px 0 0;text-wrap:balance}
+.signature{display:flex;align-items:center;gap:12px}
+.emblem{width:64px;height:64px;flex:0 0 64px;overflow:visible}
+.emblem .orbits path{fill:none;stroke:var(--muted);stroke-width:1.1;opacity:.55}
+.emblem .cp{fill:var(--proton)} .emblem .cn{fill:var(--neutron)} .emblem .el{fill:var(--accent)}
+.sig-text{display:flex;flex-direction:column;line-height:1}
+.sig-top{display:flex;align-items:baseline;gap:6px}
+.sig-pr{font:700 11px/1 var(--f-body);letter-spacing:.06em;color:var(--on-accent);background:var(--accent);border-radius:999px;padding:4px 7px;transform:translateY(-2px)}
+.sig-first{font-family:var(--f-display);font-stretch:118%;font-weight:500;font-size:19px;letter-spacing:.02em}
+.sig-last{font-family:var(--f-display);font-stretch:70%;font-weight:800;font-size:38px;letter-spacing:.14em;margin-top:2px;
+  background:linear-gradient(95deg,var(--proton) 0%,var(--uranium) 45%,var(--accent) 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.sig-sub{font:500 10.5px/1.2 var(--f-mono);color:var(--muted);letter-spacing:.04em;margin-top:4px;border-top:1px dashed var(--line);padding-top:4px}
+.sig-mini b{font-weight:800;letter-spacing:.12em;background:linear-gradient(95deg,var(--proton),var(--uranium) 45%,var(--accent));-webkit-background-clip:text;background-clip:text;color:transparent}
+.sig-mini i{font-style:normal;color:var(--accent);margin-right:4px}
+
+.tabs{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.tab{flex:0 0 auto;font:600 14px/1 var(--f-body);color:var(--fg);background:var(--surface);
+  border:1px solid var(--line);border-radius:999px;padding:11px 15px;cursor:pointer}
+.tab[aria-selected="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.tab:focus-visible,.chip:focus-visible,.btn:focus-visible,select:focus-visible,.seg button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+.grid{display:grid;grid-template-columns:minmax(0,1fr);gap:16px;align-items:start}
+@media (min-width:900px){.grid{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr)}}
+.stagecol{display:flex;flex-direction:column;gap:12px;min-width:0}
+.stage{position:relative;width:100%;max-width:100%;aspect-ratio:1/1;border-radius:14px;overflow:hidden;
+  background:var(--stage);border:1px solid var(--line);touch-action:none}
+@media (min-width:640px){.stage{aspect-ratio:4/3}}
+.three,.chartbox{position:absolute;inset:0}
+.three canvas,.chartbox canvas{display:block;width:100%;height:100%}
+.ov{position:absolute;pointer-events:none;font:500 12px/1.3 var(--f-mono);color:var(--muted)}
+.ov-tl{top:12px;left:12px;display:flex;align-items:center;gap:6px}
+.dot{width:11px;height:11px;border-radius:50%;display:inline-block}
+.dot.p{background:var(--proton)} .dot.n{background:var(--neutron);margin-left:8px}
+.ov-tr{top:12px;right:12px;text-align:right}
+.ov-bl{left:12px;right:12px;bottom:44px;font:500 13px/1.4 var(--f-body);color:var(--fg);
+  background:color-mix(in srgb, var(--surface) 88%, transparent);border:1px solid var(--line);
+  border-radius:10px;padding:8px 11px;max-width:520px}
+.sig{right:12px;bottom:12px;font:700 13px/1 var(--f-display);font-stretch:88%;letter-spacing:.03em;color:var(--fg);opacity:.72}
+.stage.is-chart .sig{bottom:auto;top:10px}
+@media (max-width:480px){.ov-tr{display:none}}
+
+.controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.chip{font:500 15px/1 var(--f-body);color:var(--fg);background:var(--surface);border:1px solid var(--line);
+  border-radius:10px;padding:8px 11px;cursor:pointer;min-height:40px}
+.chip[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}
+.btn{font:600 14px/1 var(--f-body);color:var(--on-accent);background:var(--accent);border:0;border-radius:10px;
+  padding:12px 16px;cursor:pointer;min-height:42px}
+.btn.ghost{color:var(--fg);background:transparent;border:1px solid var(--line)}
+#chChart{width:100%;height:130px;display:block}
+.seg{display:inline-flex;flex-wrap:wrap;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--surface)}
+.seg button{font:500 14px/1 var(--f-body);color:var(--fg);background:transparent;border:0;padding:11px 13px;cursor:pointer;min-height:40px}
+.seg button[aria-pressed="true"]{background:var(--fg);color:var(--bg)}
+.check{display:inline-flex;align-items:center;gap:6px;font-size:14px;color:var(--muted);cursor:pointer}
+.check input{width:18px;height:18px;accent-color:var(--accent)}
+label.sel{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--muted)}
+select{font:500 14px var(--f-body);color:var(--fg);background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:9px 10px}
+
+.panel{display:flex;flex-direction:column;gap:14px;min-width:0}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:12px;min-width:0}
+h2{font-family:var(--f-display);font-stretch:84%;font-weight:700;font-size:25px;line-height:1.08;margin:0;text-wrap:balance}
+h3{font:600 12px/1.3 var(--f-body);text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:0}
+p{margin:0}
+.muted{color:var(--muted)}
+.state{align-self:flex-start;font:600 11px/1 var(--f-body);text-transform:uppercase;letter-spacing:.08em;
+  padding:6px 10px;border-radius:999px;background:var(--accent-soft);color:var(--accent)}
+.state.free{background:color-mix(in srgb, var(--proton) 14%, transparent);color:var(--proton)}
+dl.read{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:7px 14px;margin:0;align-items:baseline}
+dl.read dt{color:var(--muted);font-size:14px;min-width:0}
+dl.read dd{margin:0;text-align:right;font:500 14px/1.3 var(--f-mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+dl.read .hl{color:var(--fg);font-weight:600}
+dl.read dd.hl{color:var(--accent);font-size:15px}
+dl.read .sep{grid-column:1/-1;height:1px;background:var(--line);margin:2px 0}
+.note{font-size:13.5px;color:var(--muted);line-height:1.5}
+.note b{color:var(--fg);font-weight:600}
+.eq{font:500 19px/1.6 var(--f-body);overflow-x:auto;white-space:nowrap;padding:6px 0}
+.law{font:400 13px/1.5 var(--f-mono);color:var(--muted);overflow-x:auto;white-space:nowrap}
+.nuc{white-space:nowrap}
+.az{display:inline-flex;flex-direction:column;align-items:flex-end;font-size:.58em;line-height:1.02;vertical-align:middle;margin-right:.06em;font-variant-numeric:tabular-nums}
+.az sup,.az sub{font-size:1em;vertical-align:baseline;line-height:1.02}
+.ediag{width:100%;height:auto;display:block}
+.ediag .lbl{fill:var(--fg);font:500 12px var(--f-body)}
+.ediag .val{fill:var(--muted);font:400 11px var(--f-mono)}
+.ediag .el{fill:var(--proton);font:600 13px var(--f-body)}
+.ediag .lv{stroke:var(--line);stroke-width:3;stroke-linecap:round}
+.ediag .lv.on{stroke:var(--accent)}
+.ediag .ax{stroke:var(--muted);stroke-width:1.2}
+.ediag .arr{stroke:var(--proton);stroke-width:2}
+.ediag .hd{fill:var(--proton)} .ediag .hdm{fill:var(--muted)}
+.ediag .mk{fill:var(--accent)}
+.big{font:600 15px/1.45 var(--f-body)}
+.info .nuc{font-size:30px;font-family:var(--f-display);font-weight:700}
+footer{font-size:12.5px;color:var(--muted);border-top:1px solid var(--line);padding-top:12px;display:flex;flex-wrap:wrap;gap:4px 16px;justify-content:space-between}
+footer b{color:var(--fg)}
+.nogl{position:absolute;inset:0;display:grid;place-items:center;padding:24px;text-align:center;color:var(--muted)}
+@media (prefers-reduced-motion: reduce){*{scroll-behavior:auto}}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div>
+      <p class="eyebrow">2<sup>e</sup> Bac PC · Physique nucléaire</p>
+      <h1>Noyaux, masse et énergie</h1>
+    </div>
+    <div class="signature" aria-label="Pr. Hicham MESBAH">
+      <svg class="emblem" viewBox="0 0 64 64" aria-hidden="true">
+        <g class="orbits">
+          <path id="orbA" d="M4,32 a28,10 0 1,0 56,0 a28,10 0 1,0 -56,0"/>
+          <path id="orbB" d="M4,32 a28,10 0 1,0 56,0 a28,10 0 1,0 -56,0" transform="rotate(60 32 32)"/>
+          <path id="orbC" d="M4,32 a28,10 0 1,0 56,0 a28,10 0 1,0 -56,0" transform="rotate(120 32 32)"/>
+        </g>
+        <g class="core"><circle cx="29.5" cy="30" r="4.2" class="cp"/><circle cx="34.5" cy="30.5" r="4.2" class="cn"/><circle cx="32" cy="34.5" r="4.2" class="cp"/><circle cx="30" cy="35" r="0.01"/></g>
+        <circle r="2.4" class="el"><animateMotion dur="2.6s" repeatCount="indefinite"><mpath href="#orbA"/></animateMotion></circle>
+        <g transform="rotate(60 32 32)"><circle r="2.4" class="el"><animateMotion dur="3.4s" repeatCount="indefinite" path="M4,32 a28,10 0 1,0 56,0 a28,10 0 1,0 -56,0"/></circle></g>
+        <g transform="rotate(120 32 32)"><circle r="2.4" class="el"><animateMotion dur="4.2s" repeatCount="indefinite" path="M4,32 a28,10 0 1,1 56,0 a28,10 0 1,1 -56,0"/></circle></g>
+      </svg>
+      <div class="sig-text">
+        <span class="sig-top"><span class="sig-pr">Pr.</span><span class="sig-first">Hicham</span></span>
+        <span class="sig-last">MESBAH</span>
+        <span class="sig-sub">Physique-chimie · simulations 3D</span>
+      </div>
+    </div>
+  </header>
+
+  <nav class="tabs" role="tablist" aria-label="Parties du cours">
+    <button class="tab" role="tab" id="t-liaison" aria-selected="true" data-tab="liaison">1 · Énergie de liaison</button>
+    <button class="tab" role="tab" id="t-aston" aria-selected="false" data-tab="aston">2 · Courbe d'Aston</button>
+    <button class="tab" role="tab" id="t-reaction" aria-selected="false" data-tab="reaction">3 · Fission et fusion</button>
+  </nav>
+
+  <main class="grid">
+    <section class="stagecol">
+      <div class="stage" id="stage">
+        <div class="three" id="three"></div>
+        <div class="chartbox" id="chartBox" hidden><canvas id="chart" aria-label="Courbe d'Aston : −El/A en fonction de A"></canvas></div>
+        <div class="ov ov-tl" id="legend"><span class="dot p"></span>Proton<span class="dot n"></span>Neutron</div>
+        <div class="ov ov-tr" id="hint">Glisser pour tourner · pincer pour zoomer</div>
+        <div class="ov ov-bl" id="caption" hidden></div>
+        <div class="ov sig sig-mini"><i>⚛</i>Pr. Hicham <b>MESBAH</b></div>
+      </div>
+
+      <div class="controls" id="ctlLiaison">
+        <div class="controls" id="chips"></div>
+        <button class="btn" id="bindBtn">Fournir E<sub>l</sub> : dissocier le noyau</button>
+      </div>
+
+      <div class="controls" id="ctlAston" hidden>
+        <label class="sel" for="astonSel">Noyau
+          <select id="astonSel"></select>
+        </label>
+        <span class="muted" style="font-size:13px">ou touchez un point de la courbe</span>
+      </div>
+
+      <div class="controls" id="ctlReact" hidden>
+        <div class="seg" role="group" aria-label="Type de réaction">
+          <button id="segFis" aria-pressed="true">Fission ²³⁵U</button>
+          <button id="segFus" aria-pressed="false">Fusion ²H + ³H</button>
+          <button id="segCh" aria-pressed="false">Réaction en chaîne</button>
+        </div>
+        <button class="btn" id="runBtn">Lancer la réaction</button>
+        <label class="check"><input type="checkbox" id="slow"> Ralenti</label>
+        <label class="check" id="ctrlWrap" hidden><input type="checkbox" id="ctrl"> Contrôlée (barres de contrôle)</label>
+      </div>
+    </section>
+
+    <aside class="panel">
+      <!-- Partie 1 -->
+      <div class="card" id="pLiaison">
+        <h3>Partie 1 · Défaut de masse</h3>
+        <h2>Énergie de liaison du noyau <span id="lsNuc"></span></h2>
+        <span class="state" id="lsState">Noyau lié, au repos</span>
+        <dl class="read">
+          <dt>Composition</dt><dd id="rdComp"></dd>
+          <dt>m(noyau)</dt><dd id="rdM"></dd>
+          <dt>Z·m<sub>p</sub> + N·m<sub>n</sub></dt><dd id="rdSum"></dd>
+          <div class="sep"></div>
+          <dt class="hl">Δm = Z·m<sub>p</sub> + N·m<sub>n</sub> − m(noyau)</dt><dd id="rdDm" class="hl"></dd>
+          <dt class="hl">E<sub>l</sub> = Δm·c²</dt><dd id="rdEl" class="hl"></dd>
+          <dt>E<sub>l</sub> en joules</dt><dd id="rdElJ"></dd>
+          <dt class="hl">E<sub>l</sub>/A</dt><dd id="rdElA" class="hl"></dd>
+        </dl>
+        <svg class="ediag" viewBox="0 0 320 172" role="img" aria-label="Diagramme énergétique du noyau">
+          <defs>
+            <marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="hd" d="M0,0 L10,5 L0,10 z"/></marker>
+            <marker id="am" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path class="hdm" d="M0,0 L10,5 L0,10 z"/></marker>
+          </defs>
+          <line class="ax" x1="20" y1="166" x2="20" y2="10" marker-end="url(#am)"/>
+          <text class="val" x="28" y="16">E</text>
+          <text class="lbl" x="44" y="30">Nucléons séparés, au repos</text>
+          <line class="lv" id="lvTop" x1="44" y1="40" x2="300" y2="40"/>
+          <text class="val" x="44" y="56" id="txTop"></text>
+          <text class="lbl" x="44" y="130" id="txBotL"></text>
+          <line class="lv on" id="lvBot" x1="44" y1="140" x2="300" y2="140"/>
+          <text class="val" x="44" y="156" id="txBot"></text>
+          <line class="arr" x1="262" y1="136" x2="262" y2="45" marker-end="url(#ah)"/>
+          <text class="el" x="252" y="96" text-anchor="end" id="txEl"></text>
+          <circle class="mk" id="mk" cx="292" cy="140" r="6"/>
+        </svg>
+        <p class="note"><b>Définition.</b> L'énergie de liaison E<sub>l</sub> est l'énergie qu'il faut fournir à un noyau au repos pour le dissocier en nucléons séparés et au repos. La masse du noyau est toujours inférieure à la somme des masses de ses nucléons : c'est le défaut de masse Δm.</p>
+      </div>
+
+      <!-- Partie 2 -->
+      <div class="card" id="pAston" hidden>
+        <h3>Partie 2 · Stabilité des noyaux</h3>
+        <h2>Courbe d'Aston : −E<sub>l</sub>/A en fonction de A</h2>
+        <div class="info" id="astonInfo"></div>
+        <p class="note"><b>Lecture.</b> Plus −E<sub>l</sub>/A est bas, plus le noyau est stable. Les noyaux les plus stables ont 20 &lt; A &lt; 190 (minimum vers le fer et le nickel). Un noyau léger gagne en stabilité par <b>fusion</b>, un noyau lourd par <b>fission</b> : dans les deux cas, de l'énergie est libérée.</p>
+      </div>
+
+      <!-- Partie 3 -->
+      <div class="card" id="pReact" hidden>
+        <h3>Partie 3 · Bilan énergétique</h3>
+        <h2 id="rxTitle"></h2>
+        <div class="eq" id="rxEq"></div>
+        <div class="law" id="rxLaw"></div>
+        <dl class="read" id="rxRead"></dl>
+        <canvas id="chChart" hidden aria-label="Nombre de fissions en fonction du temps"></canvas>
+        <p class="note" id="rxNote"></p>
+      </div>
+    </aside>
+  </main>
+
+  <footer>
+    <span>Simulation conçue par <b>Pr. Hicham MESBAH</b> · cours « Noyaux, masse et énergie », 2<sup>e</sup> Bac PC</span>
+    <span>m<sub>p</sub> = 1,00728 u · m<sub>n</sub> = 1,00866 u · m<sub>e</sub> = 0,00055 u · 1 u = 931,5 MeV/c² · 1 MeV = 1,602×10<sup>−13</sup> J</span>
+  </footer>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+(function(){
+"use strict";
+/* ---------- Constantes et données ---------- */
+const MP=1.00728, MN=1.00866, ME=0.000549, U2MEV=931.5, MEV2J=1.602e-13, NA=6.022e23;
+const RAW=[["H",1,2,2.014102],["H",1,3,3.016049],["He",2,3,3.016029],["He",2,4,4.002603],["Li",3,6,6.015123],["Li",3,7,7.016003],
+["Be",4,9,9.012183],["C",6,12,12.000000],["N",7,14,14.003074],["O",8,16,15.994915],["Ne",10,20,19.992440],["Mg",12,24,23.985042],
+["Si",14,28,27.976927],["S",16,32,31.972071],["Ca",20,40,39.962591],["Fe",26,56,55.934937],["Ni",28,62,61.928345],["Zr",40,90,89.904698],
+["Kr",36,92,91.926156],["Sr",38,94,93.915361],["Ag",47,107,106.905092],["Sn",50,120,119.902202],["Xe",54,140,139.921645],["Ba",56,141,140.914403],
+["Nd",60,142,141.907729],["W",74,184,183.950933],["Pb",82,208,207.976652],["Ra",88,226,226.025410],["U",92,235,235.043930],["U",92,238,238.050788],["Pu",94,239,239.052163]];
+const NAMES={"H-2":"deutérium","H-3":"tritium","He-4":"hélium 4","C-12":"carbone 12","O-16":"oxygène 16","Fe-56":"fer 56","U-235":"uranium 235","Ba-141":"baryum 141","Kr-92":"krypton 92","Ni-62":"nickel 62","U-238":"uranium 238","Pb-208":"plomb 208"};
+const NUC={}, LIST=[];
+RAW.forEach(([s,Z,A,m])=>{const key=s+"-"+A, N=A-Z, mn=m-Z*ME, sum=Z*MP+N*MN, dm=sum-mn, El=dm*U2MEV;
+  const o={key,sym:s,Z,A,N,mnuc:mn,sum,dm,El,ElA:El/A}; NUC[key]=o; LIST.push(o);});
+LIST.sort((a,b)=>a.A-b.A||a.Z-b.Z);
+
+const fmt=(x,d)=>x.toFixed(d).replace(".",",").replace("-","−");
+const sci=(x,d)=>{const e=Math.floor(Math.log10(Math.abs(x)));const m=x/Math.pow(10,e);return fmt(m,d)+" × 10<sup>"+(e<0?"−"+(-e):e)+"</sup>";};
+const nuc=(A,Z,s)=>`<span class="nuc"><span class="az"><sup>${A}</sup><sub>${Z}</sub></span>${s}</span>`;
+const nk=k=>{const o=NUC[k];return nuc(o.A,o.Z,o.sym);};
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const $=id=>document.getElementById(id);
+const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+const easeIO=s=>s<.5?4*s*s*s:1-Math.pow(-2*s+2,3)/2;
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+
+/* ---------- Scène 3D ---------- */
+const hasTHREE=typeof THREE!=="undefined";
+let renderer=null,scene,camera,controls,world,geo,matP,matN,flash,camGoal=null;
+const V=hasTHREE?(x,y,z)=>new THREE.Vector3(x,y,z):null;
+let LAT=[];
+function buildLattice(){const r=mulberry32(7),s=Math.SQRT1_2,L=7,pts=[];
+  for(let i=-L;i<=L;i++)for(let j=-L;j<=L;j++)for(let k=-L;k<=L;k++){if(Math.abs(i+j+k)%2===0){const v=V(i*s,j*s,k*s);pts.push({v,key:v.length()+r()*0.14});}}
+  pts.sort((a,b)=>a.key-b.key);LAT=pts.map(p=>p.v);}
+function ball(n){const out=LAT.slice(0,n).map(v=>v.clone());const c=V(0,0,0);out.forEach(v=>c.add(v));c.multiplyScalar(1/n);out.forEach(v=>v.sub(c));return out;}
+function radius(p){let m=0;p.forEach(v=>m=Math.max(m,v.length()));return m+.5;}
+function pickProtons(n,z,seed){const r=mulberry32(seed),idx=[...Array(n).keys()];for(let i=n-1;i>0;i--){const j=Math.floor(r()*(i+1));[idx[i],idx[j]]=[idx[j],idx[i]];}return new Set(idx.slice(0,z));}
+
+function initThree(){
+  if(!hasTHREE){$("three").innerHTML='<div class="nogl">La bibliothèque 3D n\'a pas pu se charger. Vérifiez la connexion Internet puis rechargez la page.</div>';return;}
+  try{renderer=new THREE.WebGLRenderer({antialias:true});}catch(e){renderer=null;$("three").innerHTML='<div class="nogl">Ce navigateur ne prend pas en charge WebGL. Essayez Chrome ou Firefox récent.</div>';return;}
+  buildLattice();
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+  $("three").appendChild(renderer.domElement);
+  scene=new THREE.Scene();
+  camera=new THREE.PerspectiveCamera(38,1,.1,500);camera.position.set(5,3.5,8);
+  controls=new THREE.OrbitControls(camera,renderer.domElement);
+  controls.enableDamping=true;controls.enablePan=false;controls.autoRotateSpeed=.7;controls.minDistance=2;controls.maxDistance=120;
+  controls.addEventListener("start",()=>{camGoal=null;});
+  scene.add(new THREE.HemisphereLight(0xffffff,0x445566,.8));
+  const d1=new THREE.DirectionalLight(0xffffff,.85);d1.position.set(5,8,6);scene.add(d1);
+  const d2=new THREE.DirectionalLight(0x9fbcff,.35);d2.position.set(-6,-3,-5);scene.add(d2);
+  world=new THREE.Group();scene.add(world);
+  geo=new THREE.SphereGeometry(.5,22,16);
+  matP=new THREE.MeshStandardMaterial({roughness:.42,metalness:.05});
+  matN=new THREE.MeshStandardMaterial({roughness:.5,metalness:.05});
+  flash=new THREE.Mesh(new THREE.SphereGeometry(1,28,18),new THREE.MeshBasicMaterial({transparent:true,opacity:0,depthWrite:false}));
+  flash.visible=false;scene.add(flash);
+  geoU=new THREE.SphereGeometry(.9,18,13);geoFrag=new THREE.SphereGeometry(.55,12,9);geoNeu=new THREE.SphereGeometry(.26,10,8);
+  geoFl=new THREE.SphereGeometry(1,16,12);geoRod=new THREE.CylinderGeometry(.35,.35,26,14);
+  matU=new THREE.MeshStandardMaterial({roughness:.45,metalness:.15});
+  matFrag=new THREE.MeshStandardMaterial({roughness:.6});
+  matNeu=new THREE.MeshStandardMaterial({roughness:.3});
+  matRod=new THREE.MeshStandardMaterial({roughness:.5,metalness:.3});
+  applyTheme();
+}
+let geoU,geoFrag,geoNeu,geoFl,geoRod,matU,matFrag,matNeu,matRod;
+function applyTheme(){if(!renderer)return;renderer.setClearColor(new THREE.Color(css("--stage")));
+  matP.color.set(css("--proton"));matN.color.set(css("--neutron"));flash.material.color.set(css("--flash"));
+  matU.color.set(css("--uranium"));matFrag.color.set(css("--fragment"));matRod.color.set(css("--rod"));
+  matNeu.color.set(css("--spark"));matNeu.emissive.set(css("--spark"));matNeu.emissiveIntensity=.6;
+  if(RS.type==="chain")drawChainChart();}
+function clearWorld(){while(world.children.length)world.remove(world.children[0]);}
+function aimCam(d){camGoal=d;}
+function camStep(){if(camGoal==null)return;const t=controls.target,cur=camera.position.distanceTo(t),nd=cur+(camGoal-cur)*.07;
+  camera.position.sub(t).setLength(nd).add(t);if(Math.abs(camGoal-nd)<.02)camGoal=null;}
+function sphere(isP,p){const m=new THREE.Mesh(geo,isP?matP:matN);m.position.copy(p);world.add(m);return m;}
+
+/* ---------- Partie 1 : énergie de liaison ---------- */
+const CHIPS=["H-2","He-4","C-12","O-16","Fe-56","U-235"];
+const LS={key:"He-4",items:[],bound:true,t0:-1,R:1};
+function buildLiaison(key){
+  LS.key=key;LS.bound=true;LS.t0=-1;
+  if(renderer){clearWorld();const d=NUC[key],pts=ball(d.A),P=pickProtons(d.A,d.Z,d.A*31+d.Z),r=mulberry32(d.A+5);
+    LS.R=radius(pts);
+    LS.items=pts.map((p,i)=>{const dir=p.length()<.05?V(r()-.5,r()-.5,r()-.5).normalize():p.clone().normalize();
+      const out=p.clone().multiplyScalar(2.6).add(dir.multiplyScalar(2.2)).add(V(r()-.5,r()-.5,r()-.5).multiplyScalar(.8));
+      return{m:sphere(P.has(i),p),home:p.clone(),out,from:p.clone(),to:p.clone(),delay:r()*.35};});
+    controls.target.set(0,0,0);aimCam(3.3*LS.R+2);}
+  updLiaisonUI();
+}
+function toggleBind(){LS.bound=!LS.bound;
+  if(renderer){LS.items.forEach(it=>{it.from.copy(it.m.position);it.to.copy(LS.bound?it.home:it.out);});LS.t0=performance.now();
+    aimCam(LS.bound?3.3*LS.R+2:3.3*(2.6*LS.R+3)+2);}
+  updLiaisonUI();}
+function stepLiaison(now){if(LS.t0<0)return;const t=(now-LS.t0)/1000;let done=true;
+  LS.items.forEach(it=>{let s=(t-it.delay)/1.3;if(s<1)done=false;s=Math.max(0,Math.min(1,s));it.m.position.lerpVectors(it.from,it.to,easeIO(s));});
+  if(done)LS.t0=-1;}
+function updLiaisonUI(){const d=NUC[LS.key];
+  $("lsNuc").innerHTML=nk(d.key);
+  $("rdComp").textContent=`Z = ${d.Z} ; N = ${d.N}`;
+  $("rdM").textContent=fmt(d.mnuc,6)+" u";
+  $("rdSum").textContent=fmt(d.sum,6)+" u";
+  $("rdDm").textContent=fmt(d.dm,6)+" u";
+  $("rdEl").textContent=fmt(d.El,2)+" MeV";
+  $("rdElJ").innerHTML=sci(d.El*MEV2J,2)+" J";
+  $("rdElA").textContent=fmt(d.ElA,2)+" MeV/nucléon";
+  const st=$("lsState");st.textContent=LS.bound?"Noyau lié, au repos":"Nucléons séparés, au repos";st.classList.toggle("free",!LS.bound);
+  $("bindBtn").innerHTML=LS.bound?"Fournir E<sub>l</sub> : dissocier le noyau":"Reconstituer le noyau (E<sub>l</sub> libérée)";
+  $("txTop").textContent="(Z·mp + N·mn)·c²  →  "+fmt(d.sum,5)+" u";
+  $("txBotL").innerHTML=`Noyau <tspan baseline-shift="super" font-size="9">${d.A}</tspan>${d.sym} au repos`;
+  $("txBot").textContent="m(noyau)·c²  →  "+fmt(d.mnuc,5)+" u";
+  $("txEl").innerHTML=`E<tspan baseline-shift="sub" font-size="9">l</tspan> = ${fmt(d.El,2)} MeV`;
+  $("lvTop").classList.toggle("on",!LS.bound);$("lvBot").classList.toggle("on",LS.bound);
+  $("mk").setAttribute("cy",LS.bound?140:40);
+  document.querySelectorAll("#chips .chip").forEach(c=>c.setAttribute("aria-pressed",c.dataset.k===LS.key?"true":"false"));
+}
+$("chips").innerHTML=CHIPS.map(k=>`<button class="chip" data-k="${k}" aria-pressed="false" aria-label="${NAMES[k]||k}">${nk(k)}</button>`).join("");
+$("chips").addEventListener("click",e=>{const b=e.target.closest(".chip");if(b)buildLiaison(b.dataset.k);});
+$("bindBtn").addEventListener("click",toggleBind);
+
+/* ---------- Partie 3 : fission et fusion ---------- */
+const RS={type:"fission",items:[],t:0,running:false,slow:false,end:7,split:false,cap:""};
+const FIS={T1:1.6,T2:2.8,end:7.2}, FUS={T1:1.8,end:5.4};
+const stretch=(v,k)=>V(v.x*(1+.6*k),v.y*(1-.18*k),v.z*(1-.18*k));
+function kAt(t){if(t<FIS.T1)return 0;const s=Math.min(1,(t-FIS.T1)/(FIS.T2-FIS.T1));return s*s+.08*Math.sin(s*Math.PI*6)*s;}
+const byX=(a,b)=>a.x-b.x;
+
+function buildFission(){
+  clearWorld();const U=ball(235),P=pickProtons(235,92,777),R=radius(U);RS.R=R;
+  const items=U.map((p,i)=>({isP:P.has(i),base:p.clone()}));
+  const contact=V(-R+.25,.8,.4);items.push({isP:false,base:contact,incoming:true,start:V(-R-8,.8,.4)});
+  const k2=kAt(FIS.T2);items.forEach(it=>it.split=stretch(it.base,k2));
+  const Ba=ball(141),Kr=ball(92),PBa=pickProtons(141,56,11),PKr=pickProtons(92,36,12);
+  const baP=[],baN=[],krP=[],krN=[];Ba.forEach((v,i)=>(PBa.has(i)?baP:baN).push(v));Kr.forEach((v,i)=>(PKr.has(i)?krP:krN).push(v));
+  [baP,baN,krP,krN].forEach(a=>a.sort(byX));
+  const prot=items.filter(i=>i.isP).sort((a,b)=>a.split.x-b.split.x),neu=items.filter(i=>!i.isP).sort((a,b)=>a.split.x-b.split.x);
+  prot.forEach((it,i)=>{if(i<56){it.frag="Ba";it.slot=baP[i];}else{it.frag="Kr";it.slot=krP[i-56];}});
+  const rr=mulberry32(99);let e=0;
+  neu.forEach((it,i)=>{if(i<85){it.frag="Ba";it.slot=baN[i];}else if(i<88){it.frag="n";const th=e*2.1+rr()*.6;e++;it.dir=V((rr()-.5)*.5,Math.cos(th),Math.sin(th)).normalize();}else{it.frag="Kr";it.slot=krN[i-88];}});
+  items.forEach(it=>it.m=sphere(it.isP,it.base));
+  RS.items=items;RS.end=FIS.end;
+}
+function setFission(t){const{T1,T2}=FIS;
+  const tau=t-T2,sBa=1.4+7*(1-Math.exp(-.8*Math.max(0,tau))),sKr=1.4+7*(141/92)*(1-Math.exp(-.8*Math.max(0,tau)));
+  const b=easeIO(Math.min(1,Math.max(0,tau)/.6)),k=kAt(t);
+  RS.items.forEach(it=>{let p;
+    if(t<T2){p=(it.incoming&&t<T1)?it.start.clone().lerp(it.base,t/T1):stretch(it.base,k);}
+    else if(it.frag==="n"){p=it.split.clone().addScaledVector(it.dir,14*(1-Math.exp(-.9*tau)));}
+    else{const c=it.frag==="Ba"?V(-sBa,0,0):V(sKr,0,0);p=it.split.clone().lerp(c.add(it.slot),b);}
+    it.m.position.copy(p);});
+  doFlash(t-T2);
+  if(t>=T2&&!RS.split){RS.split=true;aimCam(46);}
+  let c;
+  if(t<T1)c="① Un neutron lent (thermique) se dirige vers un noyau d'uranium 235.";
+  else if(t<T2)c="② Le neutron est absorbé : le noyau d'uranium 236 formé est instable et se déforme.";
+  else if(tau<1.8)c="③ Scission : deux noyaux plus légers (Ba et Kr), 3 neutrons et de l'énergie.";
+  else c="④ Les 3 neutrons libérés peuvent provoquer d'autres fissions : réaction en chaîne.";
+  setCaption(c);}
+
+function buildFusion(){
+  clearWorld();const D=ball(2),T=ball(3),He=ball(4),PHe=pickProtons(4,2,3);
+  const items=[];D.forEach((v,i)=>items.push({isP:i===0,local:v,g:-1}));T.forEach((v,i)=>items.push({isP:i===0,local:v,g:1}));
+  const heP=[],heN=[];He.forEach((v,i)=>(PHe.has(i)?heP:heN).push(v));
+  let ip=0,in_=0;const lastN=items.filter(i=>!i.isP&&i.g===1).pop();
+  items.forEach(it=>{it.split=it.local.clone().add(V(.9*it.g,0,0));
+    if(it.isP)it.slot=heP[ip++];else if(it===lastN)it.emit=true;else it.slot=heN[in_++];});
+  RS.nDir=V(.25,1,.3).normalize();
+  items.forEach(it=>it.m=sphere(it.isP,it.split));
+  RS.items=items;RS.end=FUS.end;
+}
+function setFusion(t){const{T1}=FUS;
+  if(t<T1){const s=t/T1,x=.9+5.5*(1-s*s);RS.items.forEach(it=>it.m.position.copy(it.local.clone().add(V(x*it.g,0,0))));}
+  else{const tau=t-T1,f=1-Math.exp(-.9*tau),b=easeIO(Math.min(1,tau/.5)),cHe=RS.nDir.clone().multiplyScalar(-2*f);
+    RS.items.forEach(it=>{const p=it.emit?it.split.clone().addScaledVector(RS.nDir,7*f):it.split.clone().lerp(cHe.clone().add(it.slot),b);it.m.position.copy(p);});}
+  doFlash(t-T1);
+  setCaption(t<T1?"① Un noyau de deutérium et un noyau de tritium s'approchent à très grande vitesse (T ≈ 10<sup>8</sup> K).":
+    (t-T1<1.6?"② Fusion : formation d'un noyau d'hélium 4 et émission d'un neutron, avec libération d'énergie.":"③ C'est la réaction qui alimente les étoiles et le projet ITER."));}
+
+function doFlash(tau){if(!flash)return;if(tau>=0&&tau<.8){flash.visible=true;const big=RS.type==="fission"?9:4;flash.scale.setScalar(.6+big*tau);flash.material.opacity=.75*(1-tau/.8);}else flash.visible=false;}
+function setCaption(h){if(h!==RS.cap){RS.cap=h;$("caption").innerHTML=h;}}
+function setReact(t){if(!renderer)return;RS.type==="fission"?setFission(t):setFusion(t);}
+function buildReaction(type){RS.type=type;RS.t=0;RS.running=false;RS.split=false;
+  $("segFis").setAttribute("aria-pressed",type==="fission");$("segFus").setAttribute("aria-pressed",type==="fusion");$("segCh").setAttribute("aria-pressed",type==="chain");
+  $("ctrlWrap").hidden=type!=="chain";$("chChart").hidden=type!=="chain";
+  if(controls)controls.autoRotate=type==="chain"&&!reduce;
+  updReactUI();if(flash)flash.visible=false;
+  if(type==="chain"){buildChain();}
+  else if(renderer){flash.visible=false;type==="fission"?buildFission():buildFusion();const d=type==="fission"?34:22;
+    controls.target.set(0,0,0);camera.position.set(0,d*.28,d);camGoal=null;setReact(0);}
+  updRun();}
+function runReaction(){if(RS.running)return;
+  if(RS.type==="chain"){if(CH.started)buildChain();CH.started=true;RS.t=1;RS.running=true;updRun();return;}
+  RS.t=0;RS.split=false;RS.running=true;
+  if(renderer)aimCam(RS.type==="fission"?34:22);updRun();}
+function updRun(){$("runBtn").textContent=RS.running?"Réaction en cours…":(RS.t>0?"Rejouer la réaction":"Lancer la réaction");}
+
+function updReactUI(){const n=nuc(1,0,"n");
+  if(RS.type==="chain"){const ctrl=$("ctrl").checked;
+    $("rxTitle").innerHTML=ctrl?"Réaction en chaîne contrôlée":"Réaction en chaîne non contrôlée";
+    $("rxEq").innerHTML=`1 fission → 2 ou 3 ${n} → 2 ou 3 fissions → …`;
+    $("rxLaw").innerHTML=`k = nombre moyen de neutrons qui provoquent une nouvelle fission<br>Énergie par fission : ${fmt(FIS_E,1)} MeV`;
+    $("rxRead").innerHTML=`<dt>Fissions</dt><dd id="chF" class="hl"></dd><dt>Neutrons en vol</dt><dd id="chN"></dd>
+      <dt>Génération</dt><dd id="chG"></dd><dt>Neutrons absorbés par les barres</dt><dd id="chA"></dd><div class="sep"></div>
+      <dt class="hl">Énergie libérée</dt><dd id="chE" class="hl"></dd><dt>en joules</dt><dd id="chEJ"></dd>`;
+    $("rxNote").innerHTML=ctrl?`<b>Réacteur nucléaire (k = 1).</b> Des barres de contrôle (cadmium, bore) absorbent les neutrons en excès : chaque fission n'en provoque qu'une seule autre. La puissance reste constante.`:
+      `<b>Bombe A (k &gt; 1).</b> Sans absorption, chaque fission en provoque plusieurs autres. Le nombre de fissions croît de façon exponentielle et l'énergie est libérée en une fraction de seconde. Représentation schématique : ${NU} noyaux, vitesses ralenties.`;
+    return;}
+  if(RS.type==="fission"){const U=NUC["U-235"],Ba=NUC["Ba-141"],Kr=NUC["Kr-92"];
+    const mr=MN+U.mnuc,mp=Ba.mnuc+Kr.mnuc+3*MN,dm=mp-mr,dE=dm*U2MEV,El=-dE,perg=NA/235*El*MEV2J;
+    $("rxTitle").innerHTML="Fission de l'uranium 235";
+    $("rxEq").innerHTML=`${n} + ${nk("U-235")} → ${nk("Ba-141")} + ${nk("Kr-92")} + 3 ${n}`;
+    $("rxLaw").innerHTML="Conservation de A : 1 + 235 = 141 + 92 + 3×1<br>Conservation de Z : 0 + 92 = 56 + 36 + 3×0";
+    $("rxRead").innerHTML=`<dt>m(${nk("U-235")})</dt><dd>${fmt(U.mnuc,5)} u</dd><dt>m(${nk("Ba-141")})</dt><dd>${fmt(Ba.mnuc,5)} u</dd>
+      <dt>m(${nk("Kr-92")})</dt><dd>${fmt(Kr.mnuc,5)} u</dd><dt>m(${n})</dt><dd>${fmt(MN,5)} u</dd><div class="sep"></div>
+      <dt class="hl">Δm = m(produits) − m(réactifs)</dt><dd class="hl">${fmt(dm,5)} u</dd>
+      <dt class="hl">ΔE = Δm·c²</dt><dd class="hl">${fmt(dE,1)} MeV</dd>
+      <dt>Énergie libérée par fission</dt><dd>${fmt(El,1)} MeV</dd>
+      <dt>Par nucléon (236 nucléons)</dt><dd>${fmt(El/236,2)} MeV</dd>
+      <dt>Pour 1 g d'uranium 235</dt><dd>${sci(perg,1)} J</dd>`;
+    $("rxNote").innerHTML=`<b>ΔE &lt; 0 :</b> le système perd de la masse et libère de l'énergie. 1 g d'uranium 235 libère autant d'énergie qu'environ ${fmt(perg/4.1868e10,1)} tonnes de pétrole.`;
+  }else{const D=NUC["H-2"],T=NUC["H-3"],He=NUC["He-4"];
+    const mr=D.mnuc+T.mnuc,mp=He.mnuc+MN,dm=mp-mr,dE=dm*U2MEV,El=-dE,perg=NA/5*El*MEV2J;
+    const U=NUC["U-235"],fis=-((NUC["Ba-141"].mnuc+NUC["Kr-92"].mnuc+2*MN-U.mnuc)*U2MEV),fisg=NA/235*fis*MEV2J;
+    $("rxTitle").innerHTML="Fusion du deutérium et du tritium";
+    $("rxEq").innerHTML=`${nk("H-2")} + ${nk("H-3")} → ${nk("He-4")} + ${n}`;
+    $("rxLaw").innerHTML="Conservation de A : 2 + 3 = 4 + 1<br>Conservation de Z : 1 + 1 = 2 + 0";
+    $("rxRead").innerHTML=`<dt>m(${nk("H-2")})</dt><dd>${fmt(D.mnuc,5)} u</dd><dt>m(${nk("H-3")})</dt><dd>${fmt(T.mnuc,5)} u</dd>
+      <dt>m(${nk("He-4")})</dt><dd>${fmt(He.mnuc,5)} u</dd><dt>m(${n})</dt><dd>${fmt(MN,5)} u</dd><div class="sep"></div>
+      <dt class="hl">Δm = m(produits) − m(réactifs)</dt><dd class="hl">${fmt(dm,5)} u</dd>
+      <dt class="hl">ΔE = Δm·c²</dt><dd class="hl">${fmt(dE,1)} MeV</dd>
+      <dt>Énergie libérée par fusion</dt><dd>${fmt(El,1)} MeV</dd>
+      <dt>Par nucléon (5 nucléons)</dt><dd>${fmt(El/5,2)} MeV</dd>
+      <dt>Pour 1 g de mélange ²H + ³H</dt><dd>${sci(perg,1)} J</dd>`;
+    $("rxNote").innerHTML=`<b>À masse égale,</b> la fusion libère environ ${fmt(perg/fisg,1)} fois plus d'énergie que la fission de l'uranium 235, mais elle exige des températures de l'ordre de 10<sup>8</sup> K.`;}
+}
+/* ---------- Partie 3 bis : réaction en chaîne ---------- */
+const FIS_E=-((NUC["Ba-141"].mnuc+NUC["Kr-92"].mnuc+2*MN-NUC["U-235"].mnuc)*U2MEV);
+const CH={nuclei:[],neu:[],frags:[],fl:[],t:0,fis:0,abs:0,esc:0,gen:0,hist:[],tick:0,ctrl:false,started:false,rng:null};
+const NU=260,RBOX=11,HIT2=1.3*1.3,VN=8;
+const RODS=[[-5.5,-5.5],[5.5,-5.5],[-5.5,5.5],[5.5,5.5],[0,0]];
+function randDir(r){const z=r()*2-1,t=r()*Math.PI*2,s=Math.sqrt(1-z*z);return V(s*Math.cos(t),z,s*Math.sin(t));}
+function buildChain(){
+  CH.t=0;CH.fis=0;CH.abs=0;CH.esc=0;CH.gen=0;CH.hist=[{t:0,f:0}];CH.tick=0;CH.started=false;CH.neu=[];CH.frags=[];CH.fl=[];CH.nuclei=[];
+  CH.ctrl=$("ctrl").checked;CH.rng=mulberry32((Date.now()&0xffffff)+1);
+  if(!renderer)return;clearWorld();const r=mulberry32(314);let tries=0;
+  if(CH.ctrl)RODS.forEach(([x,z])=>{const m=new THREE.Mesh(geoRod,matRod);m.position.set(x,0,z);world.add(m);});
+  while(CH.nuclei.length<NU&&tries<40000){tries++;const p=V(r()*2-1,r()*2-1,r()*2-1).multiplyScalar(RBOX);
+    if(p.length()>RBOX)continue;if(CH.ctrl&&RODS.some(([x,z])=>(p.x-x)**2+(p.z-z)**2<1.6*1.6))continue;
+    if(CH.nuclei.some(n=>n.p.distanceToSquared(p)<2.2*2.2))continue;
+    const m=new THREE.Mesh(geoU,matU);m.position.copy(p);world.add(m);CH.nuclei.push({p,alive:true,m});}
+  let tgt=CH.nuclei[0];CH.nuclei.forEach(n=>{if(n.p.length()<tgt.p.length())tgt=n;});
+  const start=tgt.p.clone().add(V(-RBOX-6,0,0));addNeutron(start,tgt.p.clone().sub(start).normalize(),0,Infinity);
+  controls.target.set(0,0,0);camera.position.set(0,11,38);camGoal=null;
+  setCaption("Appuyez sur « Lancer la réaction » : un neutron va déclencher la première fission.");
+  updChainStats();drawChainChart();}
+function addNeutron(p,dir,gen,absorbAt){const m=new THREE.Mesh(geoNeu,matNeu);m.position.copy(p);world.add(m);
+  CH.neu.push({p:p.clone(),dir,gen,absorbAt,trav:0,m});}
+function addFlash(p,big){const m=new THREE.Mesh(geoFl,new THREE.MeshBasicMaterial({color:css("--flash"),transparent:true,opacity:.8,depthWrite:false}));
+  m.position.copy(p);world.add(m);CH.fl.push({m,age:0,big});}
+function fission(n,gen){
+  const r=CH.rng;n.alive=false;world.remove(n.m);CH.fis++;CH.gen=Math.max(CH.gen,gen+1);addFlash(n.p,2.6);
+  const d=randDir(r);[[1,1],[-1,.82]].forEach(([s,sc])=>{const m=new THREE.Mesh(geoFrag,matFrag);m.scale.setScalar(sc);m.position.copy(n.p);world.add(m);
+    CH.frags.push({m,v:d.clone().multiplyScalar(3.2*s*(s>0?1:1.5))});});
+  const k=r()<.5?2:3;let aim=null;
+  const near=CH.nuclei.filter(o=>o.alive).sort((a,b)=>a.p.distanceToSquared(n.p)-b.p.distanceToSquared(n.p)).slice(0,3);
+  if(CH.ctrl&&near.length)aim=near[Math.floor(r()*near.length)];
+  for(let i=0;i<k;i++){if(CH.neu.length>520){CH.esc++;continue;}
+    let dir=randDir(r),absorbAt=Infinity;
+    if(!CH.ctrl&&gen===0&&near[i])dir=near[i].p.clone().sub(n.p).normalize();
+    if(CH.ctrl){if(i===0&&aim)dir=aim.p.clone().sub(n.p).normalize();else if(i>0)absorbAt=1.2+r()*2.4;}
+    addNeutron(n.p.clone().addScaledVector(dir,.6),dir,gen+1,absorbAt);}}
+function stepChain(dt){CH.t+=dt;
+  for(let i=CH.neu.length-1;i>=0;i--){const q=CH.neu[i];const s=VN*dt;q.p.addScaledVector(q.dir,s);q.trav+=s;q.m.position.copy(q.p);
+    let gone=false;
+    if(q.trav>q.absorbAt){CH.abs++;gone=true;}
+    else if(q.p.length()>RBOX+8&&q.trav>8){CH.esc++;gone=true;}
+    else if(q.absorbAt===Infinity){for(const n of CH.nuclei){if(n.alive&&n.p.distanceToSquared(q.p)<HIT2){fission(n,q.gen);gone=true;break;}}}
+    if(gone){world.remove(q.m);CH.neu.splice(i,1);}}
+  CH.tick+=dt;if(CH.tick>.1){CH.tick=0;CH.hist.push({t:CH.t,f:CH.fis});updChainStats();drawChainChart();}
+  if(CH.neu.length===0){RS.running=false;CH.hist.push({t:CH.t,f:CH.fis});updChainStats();drawChainChart();updRun();
+    const left=CH.nuclei.filter(n=>n.alive).length;
+    setCaption(CH.ctrl?`Réaction terminée : ${CH.fis} fissions une par une, à rythme constant (k = 1). C'est le fonctionnement d'un réacteur.`:
+      `Explosion : ${CH.fis} fissions en ${fmt(CH.t,1)} s${left?`, ${left} noyaux intacts`:""}. Le nombre de fissions a augmenté de façon exponentielle (k > 1).`);}
+  else setCaption(CH.ctrl?`Génération ${CH.gen} · ${CH.fis} fissions. Les barres de contrôle absorbent les neutrons en excès : une seule nouvelle fission à la fois.`:
+      `Génération ${CH.gen} · ${CH.fis} fissions. Chaque fission libère 2 ou 3 neutrons : le nombre de fissions croît très vite.`);}
+function stepChainFx(dt){
+  for(let i=CH.fl.length-1;i>=0;i--){const f=CH.fl[i];f.age+=dt;const a=f.age/.6;
+    if(a>=1){world.remove(f.m);f.m.material.dispose();CH.fl.splice(i,1);continue;}
+    f.m.scale.setScalar(.4+f.big*a*1.6);f.m.material.opacity=.8*(1-a);}
+  const damp=Math.exp(-1.6*dt);CH.frags.forEach(f=>{f.m.position.addScaledVector(f.v,dt);f.v.multiplyScalar(damp);});}
+function updChainStats(){if(RS.type!=="chain")return;const E=CH.fis*FIS_E;
+  const set=(id,h)=>{const e=$(id);if(e)e.innerHTML=h;};
+  set("chF",String(CH.fis));set("chN",String(CH.neu.length));set("chG",String(CH.gen));set("chA",String(CH.abs));
+  set("chE",CH.fis?sci(E,2)+" MeV":"0 MeV");set("chEJ",CH.fis?sci(E*MEV2J,2)+" J":"0 J");}
+function drawChainChart(){const c=$("chChart");if(!c||c.hidden)return;const w=c.clientWidth,h=c.clientHeight;if(!w)return;
+  const dpr=Math.min(window.devicePixelRatio||1,2);c.width=w*dpr;c.height=h*dpr;const g=c.getContext("2d");g.setTransform(dpr,0,0,dpr,0,0);
+  const mu=css("--muted"),ln=css("--line"),ac=CH.ctrl?css("--accent"):css("--proton");
+  const pad={l:34,r:8,t:10,b:22},W=w-pad.l-pad.r,H=h-pad.t-pad.b,tmax=Math.max(4,CH.t),X=t=>pad.l+t/tmax*W,Y=f=>pad.t+H-f/NU*H;
+  g.font='500 10px "IBM Plex Mono", monospace';g.textBaseline="middle";g.textAlign="right";
+  [0,130,260].forEach(f=>{g.strokeStyle=ln;g.lineWidth=1;g.beginPath();g.moveTo(pad.l,Y(f)+.5);g.lineTo(w-pad.r,Y(f)+.5);g.stroke();g.fillStyle=mu;g.fillText(String(f),pad.l-6,Y(f));});
+  g.textAlign="center";g.textBaseline="top";g.fillText("0 s",X(0)+8,pad.t+H+6);g.fillText(fmt(tmax,1)+" s",w-pad.r-16,pad.t+H+6);
+  g.fillText("fissions cumulées",pad.l+W/2,pad.t+H+6);
+  g.strokeStyle=ac;g.lineWidth=2;g.beginPath();CH.hist.forEach((p,i)=>{i?g.lineTo(X(p.t),Y(p.f)):g.moveTo(X(p.t),Y(p.f));});g.stroke();}
+
+$("segFis").addEventListener("click",()=>buildReaction("fission"));
+$("segFus").addEventListener("click",()=>buildReaction("fusion"));
+$("segCh").addEventListener("click",()=>buildReaction("chain"));
+$("ctrl").addEventListener("change",()=>{if(RS.type==="chain"){RS.running=false;RS.t=0;updReactUI();buildChain();updRun();}});
+$("runBtn").addEventListener("click",runReaction);
+$("slow").addEventListener("change",e=>RS.slow=e.target.checked);
+
+/* ---------- Partie 2 : courbe d'Aston ---------- */
+let sel="Fe-56",pts=[];
+const LBL={"H-2":[8,4,"left"],"He-4":[9,4,"left"],"C-12":[9,-4,"left"],"Fe-56":[0,20,"center"],"Kr-92":[-8,-10,"right"],"Ba-141":[0,-12,"center"],"U-235":[0,-12,"center"],"Pb-208":[0,18,"center"]};
+function drawChart(){const c=$("chart"),box=$("chartBox").getBoundingClientRect();if(!box.width)return;
+  const dpr=Math.min(window.devicePixelRatio||1,2),w=box.width,h=box.height;c.width=w*dpr;c.height=h*dpr;
+  const g=c.getContext("2d");g.setTransform(dpr,0,0,dpr,0,0);g.clearRect(0,0,w,h);
+  const fg=css("--fg"),mu=css("--muted"),ln=css("--line"),ac=css("--accent"),pr=css("--proton");
+  const pad={l:50,r:16,t:38,b:44},W=w-pad.l-pad.r,H=h-pad.t-pad.b,X=a=>pad.l+a/250*W,Y=v=>pad.t+(-v)/10*H;
+  g.fillStyle=css("--fusion-zone");g.fillRect(X(0),pad.t,X(20)-X(0),H);
+  g.fillStyle=css("--fission-zone");g.fillRect(X(190),pad.t,X(250)-X(190),H);
+  g.font='500 11px "IBM Plex Mono", monospace';g.textBaseline="middle";
+  for(let v=0;v>=-10;v--){g.strokeStyle=ln;g.lineWidth=1;g.beginPath();g.moveTo(pad.l,Y(v)+.5);g.lineTo(w-pad.r,Y(v)+.5);g.stroke();
+    if(v%2===0){g.fillStyle=mu;g.textAlign="right";g.fillText(fmt(v,0),pad.l-8,Y(v));}}
+  g.textAlign="center";g.textBaseline="top";
+  for(let a=0;a<=250;a+=50){g.fillStyle=mu;g.fillText(String(a),X(a),pad.t+H+8);}
+  g.fillStyle=fg;g.font='600 12px "IBM Plex Sans", sans-serif';g.fillText("A (nombre de nucléons)",pad.l+W/2,pad.t+H+25);
+  g.textAlign="left";g.textBaseline="alphabetic";g.fillText("−El/A (MeV/nucléon)",8,22);
+  g.font='600 11px "IBM Plex Sans", sans-serif';g.fillStyle=ac;g.textAlign="left";g.fillText("Fusion",X(1)+3,pad.t+H-8);
+  g.fillStyle=pr;g.textAlign="right";g.fillText("Fission",X(250)-4,pad.t+H-8);
+  g.strokeStyle=mu;g.lineWidth=1.4;g.beginPath();LIST.forEach((o,i)=>{const x=X(o.A),y=Y(-o.ElA);i?g.lineTo(x,y):g.moveTo(x,y);});g.stroke();
+  const arrow=(x1,y1,cx,cy,x2,y2,col)=>{g.strokeStyle=col;g.fillStyle=col;g.lineWidth=2;g.setLineDash([5,4]);g.beginPath();g.moveTo(x1,y1);g.quadraticCurveTo(cx,cy,x2,y2);g.stroke();g.setLineDash([]);
+    const an=Math.atan2(y2-cy,x2-cx);g.beginPath();g.moveTo(x2,y2);g.lineTo(x2-9*Math.cos(an-.4),y2-9*Math.sin(an-.4));g.lineTo(x2-9*Math.cos(an+.4),y2-9*Math.sin(an+.4));g.closePath();g.fill();};
+  const pU=[X(235),Y(-NUC["U-235"].ElA)],pM=[X(118),Y(-8.45)];arrow(pU[0]-6,pU[1]+6,X(180),Y(-9.4),pM[0]+8,pM[1],pr);
+  const pD=[X(2),Y(-NUC["H-2"].ElA)],pHe=[X(4),Y(-NUC["He-4"].ElA)];arrow(pD[0]+8,pD[1]+4,X(16),Y(-3.5),pHe[0]+6,pHe[1]-8,ac);
+  pts=LIST.map(o=>({o,x:X(o.A),y:Y(-o.ElA)}));
+  pts.forEach(p=>{const s=p.o.key===sel;g.beginPath();g.arc(p.x,p.y,s?6:3.6,0,7);g.fillStyle=s?ac:fg;g.fill();
+    if(s){g.beginPath();g.arc(p.x,p.y,11,0,7);g.strokeStyle=ac;g.lineWidth=1.5;g.stroke();}
+    const L=LBL[p.o.key];if(L||s){const l=L||[0,-14,"center"];g.font='500 11px "IBM Plex Mono", monospace';g.fillStyle=s?ac:fg;g.textAlign=l[2];g.textBaseline="middle";g.fillText(p.o.sym+"-"+p.o.A,p.x+l[0],p.y+l[1]);}});
+}
+function updAstonInfo(){const o=NUC[sel];let zone;
+  if(o.A<20)zone="Noyau léger : il peut libérer de l'énergie par <b>fusion</b>.";
+  else if(o.A>190)zone="Noyau lourd : il peut libérer de l'énergie par <b>fission</b>.";
+  else zone="Zone des noyaux les plus stables.";
+  $("astonInfo").innerHTML=`<div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">${nk(sel)}<span class="muted">${NAMES[sel]||""}</span></div>
+   <dl class="read" style="margin-top:10px"><dt>E<sub>l</sub></dt><dd>${fmt(o.El,1)} MeV</dd>
+   <dt class="hl">E<sub>l</sub>/A</dt><dd class="hl">${fmt(o.ElA,2)} MeV/nucléon</dd><dt>−E<sub>l</sub>/A</dt><dd>${fmt(-o.ElA,2)} MeV/nucléon</dd></dl>
+   <p class="big" style="margin-top:10px">${zone}</p>`;
+  $("astonSel").value=sel;}
+$("astonSel").innerHTML=LIST.map(o=>`<option value="${o.key}">${o.sym}-${o.A}${NAMES[o.key]?" ("+NAMES[o.key]+")":""}</option>`).join("");
+$("astonSel").addEventListener("change",e=>{sel=e.target.value;drawChart();updAstonInfo();});
+let dragging=false;
+function pick(e){const r=$("chart").getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;let best=null,bd=26*26;
+  pts.forEach(p=>{const d=(p.x-x)**2+(p.y-y)**2;if(d<bd){bd=d;best=p;}});if(best&&best.o.key!==sel){sel=best.o.key;drawChart();updAstonInfo();}}
+$("chart").addEventListener("pointerdown",e=>{dragging=true;pick(e);});
+$("chart").addEventListener("pointermove",e=>{if(dragging)pick(e);});
+addEventListener("pointerup",()=>dragging=false);
+
+/* ---------- Onglets ---------- */
+let mode="liaison";
+function setTab(t){mode=t;
+  document.querySelectorAll(".tab").forEach(b=>b.setAttribute("aria-selected",b.dataset.tab===t?"true":"false"));
+  const a=t==="aston";
+  $("three").hidden=a;$("chartBox").hidden=!a;$("legend").hidden=a;$("hint").hidden=a;$("stage").classList.toggle("is-chart",a);
+  $("caption").hidden=t!=="reaction";
+  $("ctlLiaison").hidden=t!=="liaison";$("ctlAston").hidden=!a;$("ctlReact").hidden=t!=="reaction";
+  $("pLiaison").hidden=t!=="liaison";$("pAston").hidden=!a;$("pReact").hidden=t!=="reaction";
+  if(controls)controls.autoRotate=(t==="liaison")&&!reduce;
+  if(t==="liaison")buildLiaison(LS.key);else if(t==="reaction")buildReaction(RS.type);else{drawChart();updAstonInfo();}}
+document.querySelector(".tabs").addEventListener("click",e=>{const b=e.target.closest(".tab");if(b)setTab(b.dataset.tab);});
+
+/* ---------- Boucle, redimensionnement, thème ---------- */
+function resize(){const r=$("stage").getBoundingClientRect();
+  if(renderer&&r.width){renderer.setSize(r.width,r.height,false);camera.aspect=r.width/r.height;camera.updateProjectionMatrix();}
+  if(mode==="aston")drawChart();if(mode==="reaction"&&RS.type==="chain")drawChainChart();}
+let last=performance.now();
+function loop(now){requestAnimationFrame(loop);const dt=Math.min(.05,(now-last)/1000);last=now;if(!renderer)return;
+  if(mode==="liaison")stepLiaison(now);
+  else if(mode==="reaction"&&RS.type==="chain"){const s=dt*(RS.slow?.35:1);if(RS.running)stepChain(s);stepChainFx(s);}
+  else if(mode==="reaction"&&RS.running){RS.t+=dt*(RS.slow?.35:1);if(RS.t>=RS.end){RS.t=RS.end;RS.running=false;updRun();}setReact(RS.t);}
+  camStep();controls.update();if(mode!=="aston")renderer.render(scene,camera);}
+const onTheme=()=>{applyTheme();if(mode==="aston")drawChart();};
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change",onTheme);
+new MutationObserver(onTheme).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});
+if(window.ResizeObserver)new ResizeObserver(resize).observe($("stage"));else addEventListener("resize",resize);
+
+initThree();resize();setTab("liaison");requestAnimationFrame(loop);
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{if(mode==="aston")drawChart();});
+})();
+</script>
+
+</body>
+</html>
